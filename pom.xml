@@ -7,10 +7,10 @@
     <artifactId>pizzaland_jdbi</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>pizzaland_jdbi</name>
+    <name>pizzaland</name>
 
     <build>
-        <finalName>pizzaland_jdbi</finalName>
+        <finalName>pizzaland</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
