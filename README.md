@@ -1,7 +1,9 @@
 # Développement REST avec Jersey
 
 ## Mise en plance de l'environnement
-Ce tutoriel utilise Maven. Si votre machine se trouve derrière un proxy, vous devrez mettre la configuration suivante dans le fichier ~~/.m2/settings.xml~ (à adapter à votre environnement) :
+Ce tutoriel utilise Maven. Si votre machine se trouve derrière un
+proxy, vous devrez mettre la configuration suivante dans le fichier
+`~/.m2/settings.xml` (à adapter à votre environnement) :
 
 	<settings>
 		<proxies>
