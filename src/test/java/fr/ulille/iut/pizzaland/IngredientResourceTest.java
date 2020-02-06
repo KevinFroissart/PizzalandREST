@@ -23,11 +23,6 @@ public class IngredientResourceTest extends JerseyTest {
     
     @Override
     protected Application configure() {
-       enable(TestProperties.LOG_TRAFFIC);
-       enable(TestProperties.DUMP_ENTITY);
-
-       BDDFactory.setJdbiForTests();
-
        return new ApiV1();
     }
 

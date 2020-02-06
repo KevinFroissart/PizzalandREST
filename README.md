@@ -79,6 +79,19 @@ Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour 
 |           |             |                                               | 404 si id est inconnu                         |
 |-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 
+Un ingrédient comporte uniquement un identifiant et un nom. Ça
+représentation JSON prendra donc la forme suivante :
+
+    {
+	  "id": 1,
+	  "name": "mozzarella"
+	}
+	
+Lors de la création, l'identifiant n'est pas connu. Aussi on aura une
+représentation JSON qui comporte uniquement le nom :
+
+	{ "name": "mozzarella" }
+	
 ## Mise en œuvre
 
 ### Une première implémentation : récupérer les ingrédients existants
@@ -102,5 +115,50 @@ d'un premier test.
       public void testGetEmptyList() {
         Response response = target("/ingredients").request().get();
 
+        // Vérification de la valeur de retour (200)
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+	  
+	    // Vérification de la valeur retournée (liste vide)
+	    List<IngredientDto> ingredients;
+        ingredients = response.readEntity(new GenericType<List<IngredientDto>>(){});
+
+        assertEquals(0, ingredients.size());
+
       }
+
+A ce stade, vous pouvez lancer un premier test au moyen de la commande
+`mvn test`. Évidemment, ce test va échouer.
+
+    $ mvn test
+	Results :
+
+    Failed tests:   testGetEmptyList(fr.ulille.iut.pizzaland.IngredientResourceTest): expected:<200> but was:<404>
+
+    Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+	
+Vous pouvez compiler votre code et les tests sans les lancer au moyen
+des commandes `mvn compile` et `test-compile`.
+
+Pour réussir, ce premier test, nous allons mettre en place la
+ressource `Ingrédient` dans la classe `IngredientResource` ainsi que
+le DTO (Data Transfer Object) qui représentera les données
+transportées dans les requêtes et réponses HTTP.
+
+Une première implémentation de la ressource pourra avoir la forme
+suivante :
+
+    @Path("/ingredients")
+    public class IngredientResource {
+
+    @Context
+    public UriInfo uriInfo;
+
+    public IngredientResource() {
+    }
+
+    @GET
+    public List<IngredientDto> getAll() {
+
+        return new ArrayList<IngredientDto>();
+    }
+}
