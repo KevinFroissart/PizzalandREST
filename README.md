@@ -28,35 +28,35 @@ En local, vous pouvez également recopier le fichier `/home/public/peter/maven/s
 
 ## Récupération du projet initial
 
-.
-├── pom.xml
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── fr
-    │   │       └── ulille
-    │   │           └── iut
-    │   │               └── pizzaland
-    │   │                   ├── ApiV1.java
-    │   │                   ├── BDDFactory.java
-    │   │                   ├── beans
-    │   │                   ├── dao
-    │   │                   ├── dto
-    │   │                   └── resources
-    │   ├── resources
-    │   │   ├── ingredients.json
-    │   │   └── logback.xml
-    │   └── webapp
-    │       └── WEB-INF
-    └── test
-        ├── java
-        │   └── fr
-        │       └── ulille
-        │           └── iut
-        │               └── pizzaland
-        │                   └── IngredientResourceTest.java
-        └── resources
-            └── logback-test.xml
+	.
+	├── pom.xml
+	└── src
+		├── main
+		│   ├── java
+		│   │   └── fr
+		│   │       └── ulille
+		│   │           └── iut
+		│   │               └── pizzaland
+		│   │                   ├── ApiV1.java
+		│   │                   ├── BDDFactory.java
+		│   │                   ├── beans
+		│   │                   ├── dao
+		│   │                   ├── dto
+		│   │                   └── resources
+		│   ├── resources
+		│   │   ├── ingredients.json
+		│   │   └── logback.xml
+		│   └── webapp
+		│       └── WEB-INF
+		└── test
+			├── java
+			│   └── fr
+			│       └── ulille
+			│           └── iut
+			│               └── pizzaland
+			│                   └── IngredientResourceTest.java
+			└── resources
+				└── logback-test.xml
 
 ## Développement d'une ressource `Ingredient`
 Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource ~Ingredient~. Celle-ci devrait répondre aux URI suivantes :
@@ -161,4 +161,190 @@ suivante :
 
         return new ArrayList<IngredientDto>();
     }
+}
+
+Pour réussir ce premier test, on se contentera de l'implémentation
+suivante du DTO :
+
+	package fr.ulille.iut.pizzaland.dto;
+
+	public class IngredientDto {
+
+	  public IngredientDto() {
+        
+      }
+	}
+	
+Avec cette première implémentation, on va pouvoir tester notre
+ressource : 
+
+    $ mvn test
+	
+	Results :
+
+	Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+### Récupérer un ingrédient existant
+Nous allons continuer en ajoutant la possibilité de récupérer un
+ingrédient particulier à partir de son identifiant.
+Pour cela voici un premier test qui permettra de vérifier cela :
+	 
+	 @Test
+     public void testGetExistingIngredient() {
+       IngredientDto ingredient = new IngredientDto()
+	   ingredient.setId(1);
+	   ingredient.setName("mozzarella");
+	 
+	   Response response = target("/ingredients/1).request().get();
+       assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+       IngredienDto result = response.readEntity(IngredientDto.class);
+       assertEquals(ingredient, result);
+    }
+
+Vous pourrez vérifier que le test échoue au moyen de la commande `mvn test`
+
+Afin de réussir ce test, nous devons compléter la classe IngredientDto
+avec les getter/setter correspondant aux propriétés de l'object JSON.
+
+    public class IngredientDto {
+	  private long id;
+	  private String nom;
+	
+	  public IngredientDto() {}
+	
+      public long getId() {
+	    return id;
+	  }
+	
+	  public void setId(long id) {
+	    this.id = id;
+	  }
+	
+	  public void setNom(String nom) {
+	    this.nom = nom;
+      }
+	
+      public String getNom() {
+		return nom;
+      }
+	}
+
+Du côté de la ressource, on peut fournir une première implémentation :
+
+    @GET
+    @Path("{id}")
+    public IngredientDto getOneIngredient(@PathParam("id") long id) {
+	  Ingredient ingredient = new Ingredient()
+	  ingredient.setId(1);
+	  ingredient.setName("mozzarella");
+	  
+	  return Ingredient.toDto(ingredient);
+    }
+
+Pour cette méthode, nous avons introduit la classe `Ingredient`. Ce
+Java Bean représente un ingrédient manipulé par la ressource.
+Voici une implémentation pour cette classe :
+
+package fr.ulille.iut.pizzaland.beans;
+
+import fr.ulille.iut.pizzaland.dto.IngredientCreateDto;
+import fr.ulille.iut.pizzaland.dto.IngredientDto;
+
+public class Ingredient {
+    private long id;
+    private String name;
+    
+    public Ingredient() {
+    }
+
+    public Ingredient(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
+        public void setId(long id) {
+        this.id = id;
+        }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+        public static IngredientDto toDto(Ingredient i) {
+        IngredientDto dto = new IngredientDto();
+        dto.setId(i.getId());
+        dto.setName(i.getName());
+
+                return dto;
+    }
+	
+       public static IngredientDto toDto(Ingredient i) {
+        IngredientDto dto = new IngredientDto();
+        dto.setId(i.getId());
+        dto.setName(i.getName());
+
+                return dto;
+    }
+	
+    public static Ingredient fromDto(IngredientDto dto) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId(dto.getId());
+        ingredient.setName(dto.getName());
+
+        return ingredient;
+    }
+	
+
+Le test devrait maintenant réussir :
+
+    $ mvn test
+	
+## Introduction de la persistence
+Pour aller plus loin et mettre en place la création des ingrédients il
+va falloir introduire la persistence. Pour cela, nous allons utiliser
+la librairie JDBI qui permet d'associer un modèle objet aux tables de
+base de données.
+
+Pour cela nous allons devoir implémenter un DAO (Data Access Object) :
+
+
+	package fr.ulille.iut.pizzaland.dao;
+
+	import java.util.List;
+
+	import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+	import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
+	import org.jdbi.v3.sqlobject.statement.SqlQuery;
+	import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+
+	import fr.ulille.iut.pizzaland.beans.Ingredient;
+
+	public interface IngredientDao {
+
+      @SqlUpdate("CREATE TABLE IF NOT EXISTS ingredients (id INTEGER PRIMARY KEY, name VARCHAR UNIQUE NOT NULL)")
+      void createTable();
+
+      @SqlUpdate("DROP TABLE IF EXISTS ingredients")
+      void dropTable();
+
+      @SqlUpdate("INSERT INTO ingredients (name) VALUES (:name)")
+      @GetGeneratedKeys
+      long insert(String name);
+
+      @SqlQuery("SELECT * FROM ingredients")
+      @RegisterBeanMapper(Ingredient.class)
+      List<Ingredient> getAll();
+
+      @SqlQuery("SELECT * FROM ingredients WHERE id = :id")
+      @RegisterBeanMapper(Ingredient.class)
+      Ingredient findById(long id);
 }
