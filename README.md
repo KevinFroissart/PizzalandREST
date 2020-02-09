@@ -65,22 +65,18 @@ En local, vous pouvez également recopier le fichier `/home/public/peter/maven/s
 Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource `Ingredient`. Celle-ci devrait répondre aux URI suivantes :
 
 | Opération | URI         | Action réalisée                               | Retour                                        |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
+|:----------|:------------|:----------------------------------------------|:----------------------------------------------|
 | GET       | /ingredients | récupère l'ensemble des ingrédients          | 200 et un tableau d'ingrédients               |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 | GET       | /ingredients/{id} | récupère l'ingrédient d'identifiant id  | 200 et l'ingrédient                           |
 |           |             |                                               | 404 si id est inconnu                         |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 | GET       | /ingredients/{id}/name | récupère le nom de l'ingrédient    | 200 et le nom de l'ingrédient                 |
 |           |             | d'identifiant id                              | 404 si id est inconnu                         |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 | POST      | /ingredients | création d'un ingrédient                     | 201 et l'URI de la ressource créée + représentation |
 |           |             |                                               | 400 si les informations ne sont pas correctes |
 |           |             |                                               | 409 si l'ingrédient existe déjà (même nom)    |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 | DELETE    | /ingredients/{id} | destruction de l'ingrédient d'identifiant id | 204 si l'opération à réussi                   |
 |           |             |                                               | 404 si id est inconnu                         |
-|-----------|-------------|-----------------------------------------------|-----------------------------------------------|
+
 
 Un ingrédient comporte uniquement un identifiant et un nom. Sa
 représentation JSON prendra donc la forme suivante :
@@ -90,7 +86,8 @@ représentation JSON prendra donc la forme suivante :
 	  "name": "mozzarella"
 	}
 	
-Lors de la création, l'identifiant n'est pas connu. Aussi on aura une
+Lors de la création, l'identifiant n'est pas connu car il sera fourni
+par la base de donnée. Aussi on aura une
 représentation JSON qui comporte uniquement le nom :
 
 	{ "name": "mozzarella" }
@@ -101,6 +98,45 @@ La figure ci-dessous présente l'architecture globale qui devra être
 mise en place pour notre développement :
 
 ![Architecture de la solution](architecture.svg "Architecture")
+
+#### JavaBeans
+JavaBean est un standard pour les objets Java permettant de les créer
+et de les initialiser et de les manipuler facilement. Pour cela ces
+objets doivent respecter un ensemble de conventions :
+
+  - la classe est sérialisable
+  - elle fournit au moins un constructeur vide
+  - les attributs privés de la classe sont manipulables via des
+    méthode publiques *get*_Attribut_ et *set*_Attribut_
+
+Les DTO et la classe `Ingredient`décrits dans la suite sont des
+JavaBeans.
+
+#### Data Transfer Object (DTO)
+Les DTO correspondent à la représentation des données qui sera
+transportée par HTTP. Ce sont des Javabeans qui possèdent les même
+propriétés que la représentation (avec les getter/setter
+correspondants).
+
+Jersey utilisera les *setter* pour initialiser l'objet à partir
+de la représentation JSON ou XML et les *getter* pour créer la
+représentation correspondante.
+
+#### Data Access Object (DAO)
+Le DAO permet de faire le lien entre la représentation objet et le
+cntenu de la base de données.
+Nous utiliserons la [librairie JDBI](http://jdbi.org/) qui permet
+d'associer une interface à des requêtes SQL.
+La classe `BDDFactory` qui vous est fournie permet un accès facilité
+aux fonctionnalités de JDBI.
+
+#### La représentation des données manipulées par la ressource
+La classe `Ingredient` est un JavaBean qui représente ce qu'est un
+ingrédient. Elle porte des méthodes pour passer de cette
+représentation aux DTO.
+Cela permet de découpler l'implémentation de la ressource qui traite
+les requêtes HTTP, de la donnée manipulée. Cette classe pourrait
+porter des comportements liés à cette donnée (par ex. calcul de TVA).
 
 ## Mise en œuvre
 
