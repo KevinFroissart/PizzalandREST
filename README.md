@@ -216,7 +216,6 @@ suivante :
       }
 	}
 
-
 A ce stade, vous pouvez lancer un premier test au moyen de la commande
 `mvn test`. Évidemment, ce test va échouer.
 
@@ -265,11 +264,11 @@ Pour cela voici un premier test qui permettra de vérifier cela :
 	 
 	 @Test
      public void testGetExistingIngredient() {
-       IngredientDto ingredient = new IngredientDto()
+       IngredientDto ingredient = new IngredientDto();
 	   ingredient.setId(1);
 	   ingredient.setName("mozzarella");
 	 
-	   Response response = target("/ingredients/1).request().get();
+	   Response response = target("/ingredients/1").request().get();
        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
        IngredienDto result = response.readEntity(IngredientDto.class);
@@ -306,10 +305,13 @@ avec les getter/setter correspondant aux propriétés de l'object JSON.
 
 Du côté de la ressource, on peut fournir une première implémentation :
 
+    import javax.ws.rs.PathParam;
+	
+	
     @GET
     @Path("{id}")
     public IngredientDto getOneIngredient(@PathParam("id") long id) {
-	  Ingredient ingredient = new Ingredient()
+	  Ingredient ingredient = new Ingredient();
 	  ingredient.setId(1);
 	  ingredient.setName("mozzarella");
 	  
@@ -317,7 +319,7 @@ Du côté de la ressource, on peut fournir une première implémentation :
     }
 
 Pour cette méthode, nous avons introduit la classe `Ingredient`. Ce
-Java Bean représente un ingrédient manipulé par la ressource.
+JavaBean représente un ingrédient manipulé par la ressource.
 Voici une implémentation pour cette classe :
 
 package fr.ulille.iut.pizzaland.beans;
