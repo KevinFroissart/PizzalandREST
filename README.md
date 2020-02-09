@@ -815,4 +815,70 @@ L'implémentation correspondant à ce test est simple :
             
 		return ingredient.getName();
     }
+	
+# Créer une base de données de test
+Nous avons maintenant implémenté et testé toutes les méthodes prévues
+par notre API. Si nous voulons tester avec des clients, il serait bien
+d'avoir quelques ingrédients dans la base de données. Pour cela, nous
+allons donner la possibilité de créer des ingrédients au démarrage sur la base
+d'une variable d'environnement : `PIZZAENV`.
 
+Quand cette variable aura la valeur `withdb`, nous allons remplir la
+base au démarrage avec le code suivant :
+
+	import fr.ulille.iut.pizzaland.beans.Ingredient;
+	import fr.ulille.iut.pizzaland.dao.IngredientDao;
+
+	import java.io.FileReader;
+	import java.io.IOException;
+	import java.nio.file.Paths;
+	import java.util.ArrayList;
+	import java.util.List;
+
+	import javax.json.bind.Jsonb;
+	import javax.json.bind.JsonbBuilder;
+
+	@ApplicationPath("api/v1/")
+	public class ApiV1 extends ResourceConfig {
+	  packages("fr.ulille.iut.pizzaland");
+	
+	  String environment = System.getenv("PIZZAENV");
+
+	  if ( environment != null && environment.equals("withdb") ) {
+		LOGGER.info("Loading with database");
+        Jsonb jsonb = JsonbBuilder.create();
+        try {
+			FileReader reader = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );
+            List<Ingredient> ingredients = JsonbBuilder.create().fromJson(reader, new ArrayList<Ingredient>(){}.getClass().getGenericSuperclass());
+                
+            IngredientDao ingredientDao = BDDFactory.buildDao(IngredientDao.class);
+            ingredientDao.dropTable();
+            ingredientDao.createTable();
+            for ( Ingredient ingredient: ingredients) {
+                 ingredientDao.insert(ingredient.getName());              
+            }
+		} catch ( Exception ex ) {
+			throw new IllegalStateException(ex);
+        }
+      } 
+    }
+
+Dans un terminal, nous pouvons maintenant fixer la variable
+d'environnemnet et démarrer notre serveur REST au moyen de la
+commande `mvn jetty:run` :
+	
+	$ export PIZZAENV=withdb
+	$ mvn jetty:run
+	
+Dans un autre terminal, nous pouvons utiliser `curl` pour tester nos
+différentes méthodes :
+
+	$ curl -i localhost:8080/api/v1/ingredients
+	
+	HTTP/1.1 200 OK
+	Date: Sun, 09 Feb 2020 22:08:05 GMT
+	Content-Type: application/json
+	Content-Length: 319
+	Server: Jetty(9.4.26.v20200117)
+
+	[{"id":1,"name":"mozzarella"},{"id":2,"name":"jambon"},{"id":3,"name":"champignons"},{"id":4,"name":"olives"},{"id":5,"name":"tomate"},{"id":6,"name":"merguez"},{"id":7,"name":"lardons"},{"id":8,"name":"fromage"},{"id":9,"name":"oeuf"},{"id":10,"name":"poivrons"},{"id":11,"name":"ananas"},{"id":12,"name":"reblochon"}]
