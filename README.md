@@ -562,13 +562,14 @@ L'implémentation de la classe devrait fonctionner avec le test suivant
       assertEquals(Response.Status.NOT_FOUND.getStatusCode(),response.getStatus());
     }
 
+
 	$ mvn test
 	
 	Results :
 
 	Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 
-### Test de création d'ingrédient
+### Implementation de la méthode POST
 Il va falloir implémenter la méthode POST pour la création des
 ingrédients. Commençons par les différents tests : création, création
 de deux ingrédients identiques et création d'ingrédient sans nom.
@@ -727,4 +728,91 @@ Nous pouvons maintenant vérifier nos tests :
 Vous aurez peut-être un affichage d'exception liée au test de création
 de doublon, toutefois le test est réussi puisqu'il a levé une
 exception qui a été traduite par un code d'erreur HTTP 406.
+
+### Implémentation de la méthode DELETE
+Les tests liés à la méthode DELETE sont les suivants :
+
+	@Test
+    public void testDeleteExistingIngredient() {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName("Chorizo");
+        long id = dao.insert(ingredient.getName());
+        ingredient.setId(id);
+
+        Response response = target("/ingredients/" + id).request().delete();
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+	
+	    Ingredient result = dao.findById(id);
+		assertEquals(result, null);
+	}
+
+    @Test
+    public void testDeleteNotExistingIngredient() {
+        Response response = target("/ingredients/125").request().delete();
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(),
+		response.getStatus());
+	}
+	
+Après avoir constaté que ces tests échouent, nous pouvons fournir une
+implémentation pour la méthode DELETE :
+
+	import javax.ws.rs.DELETE;
+	
+	@DELETE
+    @Path("{id}")
+    public Response deleteIngredient(@PathParam("id") long id) {
+		if ( ingredients.findById(id) == null ) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+
+	    ingredients.remove(id);
+
+	    return Response.status(Response.Status.ACCEPTED).build();
+    }
+
+Nous devons également implémenter la méthode remove dans
+`IngredientDao` :
+
+	@SqlUpdate("DELETE FROM ingredients WHERE id = :id")
+	void remove(long id);
+
+Avec cette implémentation, nos tests réussissent.
+
+### Implémentation de la méthode GET pour récupérer le nom de l'ingrédient
+Commençons par les tests correspondant à cette URI (GET
+/ingredients/{id}/name)
+
+	@Test
+    public void testGetIngredientName() {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName("Chorizo");
+        long id = dao.insert(ingredient.getName());
+
+        Response response = target("ingredients/" + id + "/name").request().get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        assertEquals("Chorizo", response.readEntity(String.class));
+    }
+
+    @Test
+    public void testGetNotExistingIngredientName() {
+        Response response = target("ingredients/125/name").request().get();
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+
+L'implémentation correspondant à ce test est simple :
+
+	@GET
+    @Path("{id}/name")
+    public String getIngredientName(@PathParam("id") long id) {
+	    Ingredient ingredient = ingredients.findById(id);
+		if ( ingredient == null ) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
+            
+		return ingredient.getName();
+    }
 
