@@ -1,7 +1,11 @@
 # Développement REST avec Jersey
 
 ## Mise en plance de l'environnement
-Ce tutoriel utilise Maven. Si votre machine se trouve derrière un
+Ce tutoriel utilise [Apache Maven](http://maven.apache.org/) pour
+l'automatisation des tâches de développement (compilation, tests,
+déploiement...).
+
+Si votre machine se trouve derrière un
 proxy, vous devrez mettre la configuration suivante dans le fichier
 `~/.m2/settings.xml` (à adapter à votre environnement) :
 
@@ -27,7 +31,18 @@ proxy, vous devrez mettre la configuration suivante dans le fichier
 En local, vous pouvez également recopier le fichier `/home/public/peter/maven/settings.xml`.
 
 ## Récupération du projet initial
+Pour récupérer le projet vous pouvez utiliser la commande `git clone
+https://gitlab.univ-lille.fr/yvan.peter/m4102_tp3.git`
 
+L'arborescence ci-dessous vous montre le contenu du projet qui vous
+servira de point de départ. Maven est configuré grâce au fichier
+`pom.xml` qui permet entre autre de spécifier les dépendances du
+projet.
+
+La classe `ApiV1` sera le point d'entrée de notre application REST qui
+permet de configurer le chemin de l'URI (`@ApplicationPath`) ainsi que
+les paquetages Java qui contiennent les ressources.
+	
 	.
 	├── pom.xml
 	└── src
@@ -58,11 +73,11 @@ En local, vous pouvez également recopier le fichier `/home/public/peter/maven/s
 			└── resources
 				└── logback-test.xml
 
-## Développement d'une ressource `Ingredient`
+## Développement d'une ressource *ingredients*
 
 ### API et représentation des données
 
-Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource `Ingredient`. Celle-ci devrait répondre aux URI suivantes :
+Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource *ingredients*. Celle-ci devrait répondre aux URI suivantes :
 
 | Opération | URI         | Action réalisée                               | Retour                                        |
 |:----------|:------------|:----------------------------------------------|:----------------------------------------------|
