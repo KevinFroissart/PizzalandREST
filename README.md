@@ -545,9 +545,186 @@ détruire la base de données entre chaque test.
 Nous pouvons maintenant vérifier que la base fonctionne avec la base
 de données :
 
-	mvn test
+	$ mvn test
 	
 	Results :
 
 	Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+## Complétons maintenant les différents tests
+L'implémentation de la classe devrait fonctionner avec le test suivant
+:
+
+
+	@Test
+    public void testGetNotExistingPizza() {
+	  Response response = target("/pizzas/125").request().get();
+      assertEquals(Response.Status.NOT_FOUND.getStatusCode(),response.getStatus());
+    }
+
+	$ mvn test
+	
+	Results :
+
+	Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+
+### Test de création d'ingrédient
+Il va falloir implémenter la méthode POST pour la création des
+ingrédients. Commençons par les différents tests : création, création
+de deux ingrédients identiques et création d'ingrédient sans nom.
+
+	import fr.ulille.iut.pizzaland.dto.IngredientCreateDto;
+
+	@Test
+    public void testCreateIngredient() {
+        IngredientCreateDto ingredientCreateDto = new IngredientCreateDto();
+        ingredientCreateDto.setName("Chorizo");
+
+        Response response = target("/ingredients")
+                .request()
+                .post(Entity.json(ingredientCreateDto));
+
+	    // On vérifie le code de status à 201
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+        IngredientDto returnedEntity = response.readEntity(IngredientDto.class);
+
+        // On vérifie que le champ d'entête Location correspond à
+        // l'URI de la nouvelle entité
+        assertEquals(target("/ingredients/" +
+			returnedEntity.getId()).getUri(), response.getLocation());
+		
+		// On vérifie que le nom correspond
+        assertEquals(returnedEntity.getName(), ingredientCreateDto.getName());
+    }
+		
+	@Test
+    public void testCreateSameIngredient() {
+        IngredientCreateDto ingredientCreateDto = new IngredientCreateDto();
+        ingredientCreateDto.setName("Chorizo");
+        dao.insert(ingredientCreateDto.getName());
+
+        Response response = target("/ingredients")
+                .request()
+                .post(Entity.json(ingredientCreateDto));
+
+        assertEquals(Response.Status.CONFLICT.getStatusCode(), response.getStatus());
+    }
+
+    @Test
+    public void testCreateIngredientWithoutName() {
+        IngredientCreateDto ingredientCreateDto = new IngredientCreateDto();
+
+        Response response = target("/ingredients")
+                .request()
+                .post(Entity.json(ingredientCreateDto));
+
+        assertEquals(Response.Status.NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
+    }
+
+Nous utiliserons un DTO spécifique `IngredientCreateDto` dans la
+mesure où nous n'aurons que le nom de l'ingrédient pour la création.
+
+La classe [`javax.ws.rs.client.Entity<T>`](https://docs.oracle.com/javaee/7/api/javax/ws/rs/client/Entity.html) permet de définir le corps de
+la requête POST et le type de données associée (ici `application/json`).
+
+Nous devons également fournir une implémentation de
+`IngredientCreateDto` pour pouvoir compiler notre code :
+
+	package fr.ulille.iut.pizzaland.dto;
+	
+	public class IngredientCreateDto {
+		private String name;
+		
+		public IngredientCreateDto() {}
+		
+		public void setName(String name) {
+			this.name = name;
+ 		}
+ 		
+		public String getName() {
+ 			return name;
+ 		}
+	}
+
+Nous pouvons maintenant compiler notre code de test et constater que
+ceux-ci échouent.
+
+	$ mvn test
+
+	Results :
+
+	Failed tests:   testCreateSameIngredient(fr.ulille.iut.pizzaland.IngredientResourceTest): expected:<409> but was:<405>
+		testCreateIngredientWithoutName(fr.ulille.iut.pizzaland.IngredientResourceTest): expected:<406> but was:<405>
+		testCreateIngredient(fr.ulille.iut.pizzaland.IngredientResourceTest): expected:<201> but was:<405>
+	
+	Tests run: 6, Failures: 3, Errors: 0, Skipped: 0
+
+Nous pouvons maintenant implémenter notre méthode POST dans la
+	ressource :
+	
+	import javax.ws.rs.POST;
+	
+	import fr.ulille.iut.pizzaland.dto.IngredientCreateDto;
+	
+	@POST
+    public Response createIngredient(IngredientCreateDto ingredientCreateDto) {
+        Ingredient existing = ingredients.findByName(ingredientCreateDto.getName());
+        if ( existing != null ) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+        
+        try {
+            Ingredient ingredient = Ingredient.fromIngredientCreateDto(ingredientCreateDto);
+            long id = ingredients.insert(ingredient.getName());
+            ingredient.setId(id);
+            IngredientDto ingredientDto = Ingredient.toDto(ingredient);
+
+            URI uri = uriInfo.getAbsolutePathBuilder().path("" + id).build();
+
+            return Response.created(uri).entity(ingredientDto).build();
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+            throw new WebApplicationException(Response.Status.NOT_ACCEPTABLE);
+        }
+    }
+
+Comme nous vérifions qu'il n'y a pas déjà un ingrédient avec le nom
+fourni, nous devont ajouter une méthode `findbyName` à notre DAP
+
+	@SqlQuery("SELECT * FROM ingredients WHERE name = :name")
+    @RegisterBeanMapper(Ingredient.class)
+    Ingredient findByName(String name);
+
+Nous avons également besoin de rajouter les méthodes de conversion
+	pour ce DTO à notre bean `Ingredient` :
+	
+	import fr.ulille.iut.pizzaland.dto.IngredientCreateDto;
+		
+	public static IngredientCreateDto toCreateDto(Ingredient ingredient) {
+        IngredientCreateDto dto = new IngredientCreateDto();
+        dto.setName(ingredient.getName());
+        
+        return dto;
+	}
+	
+	public static Ingredient fromIngredientCreateDto(IngredientCreateDto dto) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName(dto.getName());
+
+        return ingredient;
+    }
+
+Nous pouvons maintenant vérifier nos tests :
+
+	$ mvn test
+	
+	Results :
+	
+	Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+
+Vous aurez peut-être un affichage d'exception liée au test de création
+de doublon, toutefois le test est réussi puisqu'il a levé une
+exception qui a été traduite par un code d'erreur HTTP 406.
 
