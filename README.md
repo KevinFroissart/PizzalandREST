@@ -152,7 +152,7 @@ ingrédient. Elle porte des méthodes pour passer de cette
 représentation aux DTO.
 
 Cela permet de découpler l'implémentation de la ressource qui traite
-les requêtes HTTP, de la donnée manipulée.
+les requêtes HTTP et la donnée manipulée.
 
 Cette classe pourrait
 porter des comportements liés à cette donnée (par ex. calcul de TVA).
@@ -188,8 +188,34 @@ d'un premier test.
         ingredients = response.readEntity(new GenericType<List<IngredientDto>>(){});
 
         assertEquals(0, ingredients.size());
-
       }
+
+En héritant de JerseyTest, votre classe de test se comporte comme un
+[`Client`
+JAX-RS](https://docs.oracle.com/javaee/7/api/javax/ws/rs/client/Client.html). La
+méthode `target()` notamment permet de préparer une requête sur une
+URI particulière.
+
+
+Vous pouvez compiler votre code ainsi que les tests au moyen
+des commandes `mvn compile` et `mvn test-compile`. La compilation du
+code et des tests se fera automatiquement si nécessaire quand vous
+faites un `mvn test`.
+
+Pour pouvoir compiler ce premier test, il faut au minimum fournir le
+DTO `IngredientDto`.
+Pour commencer,  on se contentera de l'implémentation minimale
+suivante :
+
+	package fr.ulille.iut.pizzaland.dto;
+
+	public class IngredientDto {
+
+	  public IngredientDto() {
+        
+      }
+	}
+
 
 A ce stade, vous pouvez lancer un premier test au moyen de la commande
 `mvn test`. Évidemment, ce test va échouer.
@@ -201,15 +227,8 @@ A ce stade, vous pouvez lancer un premier test au moyen de la commande
 
     Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
 	
-Vous pouvez compiler votre code ainsi que les tests au moyen
-des commandes `mvn compile` et `mvn test-compile`. La compilation du
-code et des tests se fera automatiquement si nécessaire quand vous
-faites un `mvn test`.
-
 Pour réussir, ce premier test, nous allons mettre en place la
-ressource `IngredientResource` ainsi que
-le DTO (Data Transfer Object) qui représentera les données
-transportées dans les requêtes et réponses HTTP.
+ressource `IngredientResource`.
 
 Une première implémentation de la ressource pourra avoir la forme
 suivante :
@@ -229,18 +248,6 @@ suivante :
         return new ArrayList<IngredientDto>();
     }
 }
-
-Pour réussir ce premier test, on se contentera de l'implémentation
-suivante du DTO :
-
-	package fr.ulille.iut.pizzaland.dto;
-
-	public class IngredientDto {
-
-	  public IngredientDto() {
-        
-      }
-	}
 	
 Avec cette première implémentation, on va pouvoir tester notre
 ressource : 
