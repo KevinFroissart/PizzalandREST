@@ -1,6 +1,7 @@
 package fr.ulille.iut.pizzaland;
 
 import fr.ulille.iut.pizzaland.ApiV1;
+import fr.ulille.iut.pizzaland.dto.IngredientDto;
 
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
