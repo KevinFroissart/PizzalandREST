@@ -59,7 +59,7 @@ public class IngredientResourceTest extends JerseyTest {
 	// On vérifie la valeur retournée (liste vide)
 	// L'entité (readEntity() correspond au corps de la réponse HTTP.
 	// La classe javax.ws.rs.core.GenericType<T> permet de définir le type
-	// de la réponse lue.
+	// de la réponse lue quand on a un type complexe (typiquement une liste).
 	List<IngredientDto> ingredients;
         ingredients = response.readEntity(new GenericType<List<IngredientDto>>(){});
 

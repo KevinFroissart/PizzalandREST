@@ -262,16 +262,18 @@ Nous allons continuer en ajoutant la possibilité de récupérer un
 ingrédient particulier à partir de son identifiant.
 Pour cela voici un premier test qui permettra de vérifier cela :
 	 
+	 import fr.ulille.iut.pizzaland.beans.Ingredient;
+	 
 	 @Test
      public void testGetExistingIngredient() {
-       IngredientDto ingredient = new IngredientDto();
+       Ingredient ingredient = new Ingredient();
 	   ingredient.setId(1);
 	   ingredient.setName("mozzarella");
 	 
 	   Response response = target("/ingredients/1").request().get();
        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-       IngredienDto result = response.readEntity(IngredientDto.class);
+       Ingredient result  = Ingredient.fromDto(response.readEntity(IngredientDto.class));
        assertEquals(ingredient, result);
     }
 
@@ -282,7 +284,7 @@ avec les getter/setter correspondant aux propriétés de l'object JSON.
 
     public class IngredientDto {
 	  private long id;
-	  private String nom;
+	  private String name;
 	
 	  public IngredientDto() {}
 	
@@ -294,19 +296,19 @@ avec les getter/setter correspondant aux propriétés de l'object JSON.
 	    this.id = id;
 	  }
 	
-	  public void setNom(String nom) {
-	    this.nom = nom;
+	  public void setName(String name) {
+	    this.name = name;
       }
 	
-      public String getNom() {
-		return nom;
+      public String getName() {
+		return name;
       }
 	}
 
 Du côté de la ressource, on peut fournir une première implémentation :
 
     import javax.ws.rs.PathParam;
-	
+	import fr.ulille.iut.pizzaland.beans.Ingredient;
 	
     @GET
     @Path("{id}")
@@ -322,63 +324,78 @@ Pour cette méthode, nous avons introduit la classe `Ingredient`. Ce
 JavaBean représente un ingrédient manipulé par la ressource.
 Voici une implémentation pour cette classe :
 
-package fr.ulille.iut.pizzaland.beans;
-
-import fr.ulille.iut.pizzaland.dto.IngredientCreateDto;
-import fr.ulille.iut.pizzaland.dto.IngredientDto;
-
-public class Ingredient {
-    private long id;
-    private String name;
+	package fr.ulille.iut.pizzaland.beans;
+	
+	import fr.ulille.iut.pizzaland.dto.IngredientDto;
+	
+	public class Ingredient {
+	  private long id;
+      private String name;
     
-    public Ingredient() {
-    }
+      public Ingredient() {
+      }
 
-    public Ingredient(long id, String name) {
+      public Ingredient(long id, String name) {
         this.id = id;
         this.name = name;
-    }
+      }
     
-        public void setId(long id) {
+      public void setId(long id) {
         this.id = id;
-        }
+      }
 
-    public long getId() {
+      public long getId() {
         return id;
-    }
+      }
 
-    public String getName() {
+      public String getName() {
         return name;
-    }
+      }
 
-    public void setName(String name) {
+      public void setName(String name) {
         this.name = name;
-    }
+      }
 
-        public static IngredientDto toDto(Ingredient i) {
+      public static IngredientDto toDto(Ingredient i) {
         IngredientDto dto = new IngredientDto();
         dto.setId(i.getId());
         dto.setName(i.getName());
 
-                return dto;
-    }
+        return dto;
+      }
 	
-       public static IngredientDto toDto(Ingredient i) {
-        IngredientDto dto = new IngredientDto();
-        dto.setId(i.getId());
-        dto.setName(i.getName());
-
-                return dto;
-    }
-	
-    public static Ingredient fromDto(IngredientDto dto) {
+      public static Ingredient fromDto(IngredientDto dto) {
         Ingredient ingredient = new Ingredient();
         ingredient.setId(dto.getId());
         ingredient.setName(dto.getName());
 
         return ingredient;
-    }
-	
+      }
+	  
+	  @Override
+      public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Ingredient other = (Ingredient) obj;
+        if (id != other.id)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
+	  }
+
+	  @Override
+      public String toString() {
+        return "Ingredient [id=" + id + ", name=" + name + "]";
+      }
+	}
 
 Le test devrait maintenant réussir :
 
