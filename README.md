@@ -1,6 +1,6 @@
 # Développement REST avec Jersey
 
-## Mise en plance de l'environnement
+## Mise en place de l'environnement
 Ce tutoriel utilise [Apache Maven](http://maven.apache.org/) pour
 l'automatisation des tâches de développement (compilation, tests,
 déploiement...).
