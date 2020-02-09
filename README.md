@@ -87,7 +87,7 @@ représentation JSON prendra donc la forme suivante :
 	}
 	
 Lors de la création, l'identifiant n'est pas connu car il sera fourni
-par la base de donnée. Aussi on aura une
+par la base de données. Aussi on aura une
 représentation JSON qui comporte uniquement le nom :
 
 	{ "name": "mozzarella" }
@@ -107,7 +107,7 @@ objets doivent respecter un ensemble de conventions :
   - la classe est sérialisable
   - elle fournit au moins un constructeur vide
   - les attributs privés de la classe sont manipulables via des
-    méthode publiques *get*_Attribut_ et *set*_Attribut_
+    méthodes publiques **get**_Attribut_ et **set**_Attribut
 
 Les DTO et la classe `Ingredient`décrits dans la suite sont des
 JavaBeans.
@@ -124,7 +124,8 @@ représentation correspondante.
 
 #### Data Access Object (DAO)
 Le DAO permet de faire le lien entre la représentation objet et le
-cntenu de la base de données.
+contenu de la base de données.
+
 Nous utiliserons la [librairie JDBI](http://jdbi.org/) qui permet
 d'associer une interface à des requêtes SQL.
 La classe `BDDFactory` qui vous est fournie permet un accès facilité
@@ -134,8 +135,11 @@ aux fonctionnalités de JDBI.
 La classe `Ingredient` est un JavaBean qui représente ce qu'est un
 ingrédient. Elle porte des méthodes pour passer de cette
 représentation aux DTO.
+
 Cela permet de découpler l'implémentation de la ressource qui traite
-les requêtes HTTP, de la donnée manipulée. Cette classe pourrait
+les requêtes HTTP, de la donnée manipulée.
+
+Cette classe pourrait
 porter des comportements liés à cette donnée (par ex. calcul de TVA).
 
 ## Mise en œuvre
@@ -182,11 +186,13 @@ A ce stade, vous pouvez lancer un premier test au moyen de la commande
 
     Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
 	
-Vous pouvez compiler votre code et les tests sans les lancer au moyen
-des commandes `mvn compile` et `test-compile`.
+Vous pouvez compiler votre code ainsi que les tests au moyen
+des commandes `mvn compile` et `mvn test-compile`. La compilation du
+code et des tests se fera automatiquement si nécessaire quand vous
+faites un `mvn test`.
 
 Pour réussir, ce premier test, nous allons mettre en place la
-ressource `Ingrédient` dans la classe `IngredientResource` ainsi que
+ressource `IngredientResource` ainsi que
 le DTO (Data Transfer Object) qui représentera les données
 transportées dans les requêtes et réponses HTTP.
 
