@@ -407,8 +407,7 @@ va falloir introduire la persistence. Pour cela, nous allons utiliser
 la librairie JDBI qui permet d'associer un modèle objet aux tables de
 base de données.
 
-Pour cela nous allons devoir implémenter un DAO (Data Access Object) :
-
+Pour cela nous allons devoir implémenter le DAO (Data Access Object) `IngredientDao` :
 
 	package fr.ulille.iut.pizzaland.dao;
 
@@ -440,4 +439,115 @@ Pour cela nous allons devoir implémenter un DAO (Data Access Object) :
       @SqlQuery("SELECT * FROM ingredients WHERE id = :id")
       @RegisterBeanMapper(Ingredient.class)
       Ingredient findById(long id);
-}
+	}
+
+JDBI fonctionne par annotations :
+  - Les annotations `sqlUpdate` et `SqlQuery` correspondent à des
+  requêtes SQL en modification ou non.
+  - `@GetGeneratedKeys` permet de renvoyer la clé primaire générée par
+  la base de données.
+  - `@RegisterBeanMapper` permet d'associer une classe à un résultat
+  (les champs de la table sont associés aux propriétés du bean).
+  
+Reprenons maintenant le code déjà écrit pour aller chercher les
+ingrédients dans une base de données (nous utiliserons `Sqlite`).
+
+### Les tests avec la base de données
+Nous allons utiliser le DAO pour insérer des données dans la table
+afin de réaliser nos tests. Nous utiliserons une base de données de
+tests qui est définie via la classe `BDDFactory`.
+
+Les méthodes `setEnvUp` et `tearEnvDown` permettent de créer et
+détruire la base de données entre chaque test.
+	
+	import fr.ulille.iut.pizzaland.dao.IngredientDao;
+	
+	public class IngredientResourceTest extends JerseyTest {
+	  private IngredientDao dao;
+	  
+	  @Override
+      protected Application configure() {
+       BDDFactory.setJdbiForTests();
+
+       return new ApiV1();
+    }
+	
+	@Before
+    public void setEnvUp() {
+        dao = BDDFactory.buildDao(IngredientDao.class);
+        dao.createTable();
+    }
+
+    @After
+    public void tearEnvDown() throws Exception {
+       dao.dropTable();
+    }
+	
+	@Test
+    public void testGetExistingIngredient() {
+
+        Ingredient ingredient = new Ingredient();
+        ingredient.setName("Chorizo");
+
+	    long id = dao.insert(ingredient.getName());
+        ingredient.setId(id);
+
+        Response response = target("/ingredients/" + id).request().get();
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        Ingredient result = Ingredient.fromDto(response.readEntity(IngredientDto.class));
+        assertEquals(ingredient, result);
+    }
+
+### La ressource avec la base de données
+
+	import fr.ulille.iut.pizzaland.BDDFactory;
+	import fr.ulille.iut.pizzaland.dao.IngredientDao;
+	
+	import java.util.stream.Collectors;
+	
+	import javax.ws.rs.WebApplicationException;
+	
+	public class IngredientResource {
+	  private IngredientDao ingredients;
+	  
+	  public IngredientResource() {
+        ingredients = BDDFactory.buildDao(IngredientDao.class);
+        ingredients.createTable();
+      }
+	  
+	  @GET
+      public List<IngredientDto> getAll() {
+        LOGGER.info("IngredientResource:getAll");
+
+        List<IngredientDto> l = ingredients.getAll().stream().map(Ingredient::toDto).collect(Collectors.toList());
+        return l;
+	  }
+
+	  @GET
+      @Path("{id}")
+      public IngredientDto getOneIngredient(@PathParam("id") long id) {
+        LOGGER.info("getOneIngredient(" + id + ")");
+        try {
+            Ingredient ingredient = ingredients.findById(id);
+			return Ingredient.toDto(ingredient);
+        }
+        catch ( Exception e ) {
+			// Cette exception générera une réponse avec une erreur 404
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+      }
+	  
+	}
+
+### Les tests fonctionnent avec la base de données
+Nous pouvons maintenant vérifier que la base fonctionne avec la base
+de données :
+
+	mvn test
+	
+	Results :
+
+	Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
