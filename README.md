@@ -59,7 +59,10 @@ En local, vous pouvez également recopier le fichier `/home/public/peter/maven/s
 				└── logback-test.xml
 
 ## Développement d'une ressource `Ingredient`
-Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource ~Ingredient~. Celle-ci devrait répondre aux URI suivantes :
+
+### API et représentation des données
+
+Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour la ressource `Ingredient`. Celle-ci devrait répondre aux URI suivantes :
 
 | Opération | URI         | Action réalisée                               | Retour                                        |
 |-----------|-------------|-----------------------------------------------|-----------------------------------------------|
@@ -79,7 +82,7 @@ Nous pouvons tout d'abord réfléchir à l'API REST que nous allons offrir pour 
 |           |             |                                               | 404 si id est inconnu                         |
 |-----------|-------------|-----------------------------------------------|-----------------------------------------------|
 
-Un ingrédient comporte uniquement un identifiant et un nom. Ça
+Un ingrédient comporte uniquement un identifiant et un nom. Sa
 représentation JSON prendra donc la forme suivante :
 
     {
@@ -91,7 +94,14 @@ Lors de la création, l'identifiant n'est pas connu. Aussi on aura une
 représentation JSON qui comporte uniquement le nom :
 
 	{ "name": "mozzarella" }
-	
+
+### Architecture logicielle de la solution
+
+La figure ci-dessous présente l'architecture globale qui devra être
+mise en place pour notre développement :
+
+![Architecture de la solution](architecture.svg "Architecture")
+
 ## Mise en œuvre
 
 ### Une première implémentation : récupérer les ingrédients existants
