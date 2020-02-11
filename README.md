@@ -487,7 +487,7 @@ détruire la base de données entre chaque test.
     public void testGetExistingIngredient() {
 
         Ingredient ingredient = new Ingredient();
-        ingredient.setName("Chorizo");
+        ingredient.setName("mozzarella");
 
 	    long id = dao.insert(ingredient.getName());
         ingredient.setId(id);
@@ -579,7 +579,7 @@ de deux ingrédients identiques et création d'ingrédient sans nom.
 	@Test
     public void testCreateIngredient() {
         IngredientCreateDto ingredientCreateDto = new IngredientCreateDto();
-        ingredientCreateDto.setName("Chorizo");
+        ingredientCreateDto.setName("mozzarella");
 
         Response response = target("/ingredients")
                 .request()
@@ -602,7 +602,7 @@ de deux ingrédients identiques et création d'ingrédient sans nom.
 	@Test
     public void testCreateSameIngredient() {
         IngredientCreateDto ingredientCreateDto = new IngredientCreateDto();
-        ingredientCreateDto.setName("Chorizo");
+        ingredientCreateDto.setName("mozzarella");
         dao.insert(ingredientCreateDto.getName());
 
         Response response = target("/ingredients")
@@ -692,7 +692,7 @@ Nous pouvons maintenant implémenter notre méthode POST dans la
     }
 
 Comme nous vérifions qu'il n'y a pas déjà un ingrédient avec le nom
-fourni, nous devont ajouter une méthode `findbyName` à notre DAP
+fourni, nous devont ajouter une méthode `findbyName` à notre DAO
 
 	@SqlQuery("SELECT * FROM ingredients WHERE name = :name")
     @RegisterBeanMapper(Ingredient.class)
@@ -735,7 +735,7 @@ Les tests liés à la méthode DELETE sont les suivants :
 	@Test
     public void testDeleteExistingIngredient() {
         Ingredient ingredient = new Ingredient();
-        ingredient.setName("Chorizo");
+        ingredient.setName("mozzarella");
         long id = dao.insert(ingredient.getName());
         ingredient.setId(id);
 
@@ -786,14 +786,14 @@ Commençons par les tests correspondant à cette URI (GET
 	@Test
     public void testGetIngredientName() {
         Ingredient ingredient = new Ingredient();
-        ingredient.setName("Chorizo");
+        ingredient.setName("mozzarella");
         long id = dao.insert(ingredient.getName());
 
         Response response = target("ingredients/" + id + "/name").request().get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        assertEquals("Chorizo", response.readEntity(String.class));
+        assertEquals("mozzarella", response.readEntity(String.class));
     }
 
     @Test
@@ -840,15 +840,17 @@ base au démarrage avec le code suivant :
 
 	@ApplicationPath("api/v1/")
 	public class ApiV1 extends ResourceConfig {
-	  packages("fr.ulille.iut.pizzaland");
 	
-	  String environment = System.getenv("PIZZAENV");
+	  public ApiV1() {
+	    packages("fr.ulille.iut.pizzaland");
+	
+        String environment = System.getenv("PIZZAENV");
 
-	  if ( environment != null && environment.equals("withdb") ) {
-		LOGGER.info("Loading with database");
-        Jsonb jsonb = JsonbBuilder.create();
-        try {
-			FileReader reader = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );
+	    if ( environment != null && environment.equals("withdb") ) {
+		  LOGGER.info("Loading with database");
+          Jsonb jsonb = JsonbBuilder.create();
+          try {
+		  	FileReader reader = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );
             List<Ingredient> ingredients = JsonbBuilder.create().fromJson(reader, new ArrayList<Ingredient>(){}.getClass().getGenericSuperclass());
                 
             IngredientDao ingredientDao = BDDFactory.buildDao(IngredientDao.class);
@@ -857,12 +859,12 @@ base au démarrage avec le code suivant :
             for ( Ingredient ingredient: ingredients) {
                  ingredientDao.insert(ingredient.getName());              
             }
-		} catch ( Exception ex ) {
+		  } catch ( Exception ex ) {
 			throw new IllegalStateException(ex);
-        }
-      } 
+          }
+        } 
+      }
     }
-
 Dans un terminal, nous pouvons maintenant fixer la variable
 d'environnemnet et démarrer notre serveur REST au moyen de la
 commande `mvn jetty:run` :
