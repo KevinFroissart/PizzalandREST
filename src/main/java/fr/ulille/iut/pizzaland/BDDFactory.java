@@ -10,12 +10,15 @@ import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class BDDFactory {
     private static Jdbi jdbi = null;
-
+    private static String dbPath = "jdbc:sqlite:"
+	+ System.getProperty("java.io.tmpdir")
+	+ System.getProperty("file.separator")
+	+ System.getProperty("user.name")
+	+ "_";
+	
     public static Jdbi getJdbi() {
         if ( jdbi == null ) {
-            jdbi = Jdbi.create("jdbc:sqlite:"
-                + System.getProperty("java.io.tmpdir")
-                + System.getProperty("file.separator") + "pizza.db")
+            jdbi = Jdbi.create(dbPath + "pizza.db")
                 .installPlugin(new SQLitePlugin())
                 .installPlugin(new SqlObjectPlugin());
         }
@@ -24,9 +27,7 @@ public class BDDFactory {
 
     public static void setJdbiForTests() {
         if ( jdbi == null ) {
-            jdbi = Jdbi.create("jdbc:sqlite:"
-                + System.getProperty("java.io.tmpdir")
-                + System.getProperty("file.separator") + "pizza_test.db")
+            jdbi = Jdbi.create(dbPath + "pizza_test.db")
             .installPlugin(new SQLitePlugin())
             .installPlugin(new SqlObjectPlugin());
         }
