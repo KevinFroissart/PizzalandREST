@@ -946,7 +946,7 @@ différentes méthodes :
 Une pizza comprend des ingrédients. Pour développer cette ressource,
 vous aurez donc besoin d'un table d'association au niveau de la base
 de données. Cela pourra être géré au niveau du DAO grâce à
-[https://jdbi.org/#_default_methods](JDBI). Cet extrait de code montre
+[JDBI](https://jdbi.org/#_default_methods). Cet extrait de code montre
 comment faire :
 
 	public interface PizzaDao {
