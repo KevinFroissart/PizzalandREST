@@ -949,6 +949,8 @@ de données. Cela pourra être géré au niveau du DAO grâce à
 [JDBI](https://jdbi.org/#_default_methods). Cet extrait de code montre
 comment faire :
 
+	import org.jdbi.v3.sqlobject.transaction.Transaction;
+	
 	public interface PizzaDao {
 	
       @SqlUpdate("CREATE TABLE IF NOT EXISTS Pizzas ....")
@@ -957,6 +959,7 @@ comment faire :
       @SqlUpdate("CREATE TABLE IF NOT EXISTS PizzaIngredientsAssociation .....")
       void createAssociationTable();
 
+	  @Transaction
       default void createTableAndIngredientAssociation() {
         createAssociationTable();
         createPizzaTable();
