@@ -815,7 +815,64 @@ L'implémentation correspondant à ce test est simple :
             
 		return ingredient.getName();
     }
+
+### Implémentation d'une méthode de création avec des données de formulaire
+La création d'un ingrédient pourrait également se faire via un
+formulaire Web. Dans ce cas, le type de représentation sera
+`application/x-www-form-urlencoded`. 
+
+On peut déjà préparer un test pour cette méthode de création :
+
+	import javax.ws.rs.core.MediaType;
+	import javax.ws.rs.core.Form;
+
+	import static org.junit.Assert.assertNotNull;
+
+	@Test
+    public void testCreateWithForm() {
+        Form form = new Form();
+        form.param("name", "chorizo");
+
+        Entity<Form> formEntity = Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        Response response = target("ingredients").request().post(formEntity);
+        
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        String location = response.getHeaderString("Location");
+        long id = Integer.parseInt(location.substring(location.lastIndexOf('/') + 1));
+        Ingredient result = dao.findById(id);
+		
+        assertNotNull(result);
+    }
+
+On peut maintenant fournir une implémentation pour cette méthode :
+
+	@POST
+    @Consumes("application/x-www-form-urlencoded")
+    public Response createIngredient(@FormParam("name") String name) {
+        Ingredient existing = ingredients.findByName(name);
+        if ( existing != null ) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+        
+        try {
+            Ingredient ingredient = new Ingredient();
+            ingredient.setName(name);
+            
+            long id = ingredients.insert(ingredient.getName());
+            ingredient.setId(id);
+            IngredientDto ingredientDto = Ingredient.toDto(ingredient);
+
+            URI uri = uriInfo.getAbsolutePathBuilder().path("" + id).build();
+
+            return Response.created(uri).entity(ingredientDto).build();
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+            throw new WebApplicationException(Response.Status.NOT_ACCEPTABLE);
+        }
+    }
 	
+
 # Créer une base de données de test
 Nous avons maintenant implémenté et testé toutes les méthodes prévues
 par notre API. Si nous voulons tester avec des clients, il serait bien
