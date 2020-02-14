@@ -941,3 +941,28 @@ différentes méthodes :
 	Server: Jetty(9.4.26.v20200117)
 
 	[{"id":1,"name":"mozzarella"},{"id":2,"name":"jambon"},{"id":3,"name":"champignons"},{"id":4,"name":"olives"},{"id":5,"name":"tomate"},{"id":6,"name":"merguez"},{"id":7,"name":"lardons"},{"id":8,"name":"fromage"},{"id":9,"name":"oeuf"},{"id":10,"name":"poivrons"},{"id":11,"name":"ananas"},{"id":12,"name":"reblochon"}]
+
+# Implémentation de la ressource Pizza
+Une pizza comprend des ingrédients. Pour développer cette ressource,
+vous aurez donc besoin d'un table d'association au niveau de la base
+de données. Cela pourra être géré au niveau du DAO grâce à
+[https://jdbi.org/#_default_methods](JDBI). Cet extrait de code montre
+comment faire :
+
+	public interface PizzaDao {
+	
+      @SqlUpdate("CREATE TABLE IF NOT EXISTS Pizzas ....")
+      void createPizzaTable();
+
+      @SqlUpdate("CREATE TABLE IF NOT EXISTS PizzaIngredientsAssociation .....")
+      void createAssociationTable();
+
+      default void createTableAndIngredientAssociation() {
+        createAssociationTable();
+        createPizzaTable();
+    }
+
+Vous écrivez les différentes méthodes annotées avec `@SqlUpdate` ou
+`@SqlQuery`. Vous utilisez ensuite ces méthodes au sein d'une méthode
+ayant le mot clé `default`. C'est cette méthode que vous utiliserez
+dans votre ressource.
