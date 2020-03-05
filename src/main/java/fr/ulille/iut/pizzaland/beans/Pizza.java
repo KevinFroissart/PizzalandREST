@@ -8,12 +8,12 @@ import fr.ulille.iut.pizzaland.dto.PizzaDto;
 public class Pizza {
 	private long id;
 	private String name;
-	private List<Ingredient> listeIngredient;
+	private Ingredient[] listeIngredient;
 
 	public Pizza() {
 	}
 
-	public Pizza(long id, String name, List<Ingredient> listeIngredient) {
+	public Pizza(long id, String name, Ingredient[] listeIngredient) {
 		this.id = id;
 		this.name = name;
 		this.listeIngredient = listeIngredient;
@@ -40,11 +40,11 @@ public class Pizza {
 		this.name = name;
 	}
 
-	public List<Ingredient> getListeIngredient() {
+	public Ingredient[] getListeIngredient() {
 		return listeIngredient;
 	}
 
-	public void setListeIngredient(List<Ingredient> listeIngredient) {
+	public void setListeIngredient(Ingredient[] listeIngredient) {
 		this.listeIngredient = listeIngredient;
 	}
 
