@@ -27,10 +27,10 @@
 
 	curl -i localhost:8080/api/v1/pizzas/ --noproxy localhost
 
-### Afficher un ingrédient particulié :
+### Afficher une pizza en particulié :
 
 	curl -i localhost:8080/api/v1/pizzas/1 --noproxy localhost
 
-### Détruire un ingrédient :
+### Détruire une pizza :
 
 	curl -X DELETE -vi localhost:8080/api/v1/pizzas/1 --noproxy localhost
