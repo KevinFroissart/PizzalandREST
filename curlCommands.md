@@ -34,3 +34,21 @@
 ### Détruire une pizza :
 
 	curl -X DELETE -vi localhost:8080/api/v1/pizzas/1 --noproxy localhost
+
+## Commandes
+
+### Ajouter une commande :
+
+	curl -d "id=1&name=Froissart" -i localhost:8080/api/v1/commandes --noproxy localhost
+
+### Afficher les commande :
+
+	curl -i localhost:8080/api/v1/commandes/ --noproxy localhost
+
+### Afficher une commande en particulier :
+
+	curl -i localhost:8080/api/v1/commandes/1 --noproxy localhost
+
+### Détruire une commande :
+
+	curl -X DELETE -vi localhost:8080/api/v1/commandes/1 --noproxy localhost
