@@ -2,4 +2,8 @@
 { "name": "margarita", "ingredients": [{ "name": "jambon" }, { "name": "mozzarella" }]},
 { "name": "cannibale", "ingredients": [{ "name": "merguez" }, { "name": "fromage" }]},
 { "name": "reine", "ingredients": [{ "name": "oeuf" }, { "name": "lardons" }]},
+{ "name": "diavola", "ingredients": [{ "name": "tomate" }, { "name": "mozzarella" }]},
+{ "name": "sicilienne", "ingredients": [{ "name": "champignons" }, { "name": "olives" }]},
+{ "name": "calzone", "ingredients": [{ "name": "jambon" }, { "name": "oeuf" }]},
+{ "name": "passaladière", "ingredients": [{ "name": "poivrons" }, { "name": "olives" }]},
 ]
