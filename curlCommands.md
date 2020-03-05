@@ -27,7 +27,7 @@
 
 	curl -i localhost:8080/api/v1/pizzas/ --noproxy localhost
 
-### Afficher une pizza en particulié :
+### Afficher une pizza en particulier :
 
 	curl -i localhost:8080/api/v1/pizzas/1 --noproxy localhost
 
