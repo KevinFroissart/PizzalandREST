@@ -38,7 +38,7 @@ public class PizzaRessourceTest extends JerseyTest {
 	protected Application configure() {
 		BDDFactory.setJdbiForTests();
 
-		return new ApiV2();
+		return new ApiV1();
 	}
 
 	@Before
@@ -56,7 +56,7 @@ public class PizzaRessourceTest extends JerseyTest {
 	public void testGetExistingPizza() {
 
 		Pizza pizza = new Pizza();
-		pizza.setName("reine");
+		pizza.setName("margarita");
 
 		long id = dao.insert(pizza.getName());
 		pizza.setId(id);
@@ -99,7 +99,7 @@ public class PizzaRessourceTest extends JerseyTest {
 	@Test
 	public void testCreatePizza() {
 		PizzaCreateDto pizzaCreateDto = new PizzaCreateDto();
-		pizzaCreateDto.setName("mozzarella");
+		pizzaCreateDto.setName("Reine");
 
 		Response response = target("/Pizzas")
 				.request()
@@ -146,7 +146,7 @@ public class PizzaRessourceTest extends JerseyTest {
 	@Test
 	public void testDeleteExistingPizza() {
 		Pizza pizza = new Pizza();
-		pizza.setName("mozzarella");
+		pizza.setName("margarita");
 		long id = dao.insert(pizza.getName());
 		pizza.setId(id);
 
@@ -168,7 +168,7 @@ public class PizzaRessourceTest extends JerseyTest {
 	@Test
 	public void testGetPizzaName() {
 		Pizza pizza = new Pizza();
-		pizza.setName("reine");
+		pizza.setName("margarita");
 		long id = dao.insert(pizza.getName());
 
 		Response response = target("Pizzas/" + id + "/name").request().get();

@@ -1,14 +1,14 @@
 [
     { "name": "mozzarella"},
-{ "name": "jambon"},
-{ "name": "champignons"},
-{ "name": "olives"},
-{ "name": "tomate"},
-{ "name": "merguez"},
-{ "name": "lardons"},
-{ "name": "fromage"},
-{ "name": "oeuf"},
-{ "name": "poivrons"},
-{ "name": "ananas"},
-{ "name": "reblochon"}
+	{ "name": "jambon"},
+	{ "name": "champignons"},
+	{ "name": "olives"},
+	{ "name": "tomate"},
+	{ "name": "merguez"},
+	{ "name": "lardons"},
+	{ "name": "fromage"},
+	{ "name": "oeuf"},
+	{ "name": "poivrons"},
+	{ "name": "ananas"},
+	{ "name": "reblochon"}
 ]

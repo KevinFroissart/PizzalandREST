@@ -24,7 +24,7 @@ import fr.ulille.iut.pizzaland.dto.PizzaCreateDto;
 import fr.ulille.iut.pizzaland.dto.PizzaDto;
 
 
-@Path("/Pizzas")
+@Path("/pizzas")
 public class PizzaRessource {
 	private static final Logger LOGGER = Logger.getLogger(PizzaRessource.class.getName());
 

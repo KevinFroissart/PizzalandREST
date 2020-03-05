@@ -12,7 +12,9 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import fr.ulille.iut.pizzaland.beans.Ingredient;
+import fr.ulille.iut.pizzaland.beans.Pizza;
 import fr.ulille.iut.pizzaland.dao.IngredientDao;
+import fr.ulille.iut.pizzaland.dao.PizzaDao;
 
 
 @ApplicationPath("api/v1/")
@@ -34,8 +36,23 @@ public class ApiV1 extends ResourceConfig {
 				IngredientDao ingredientDao = BDDFactory.buildDao(IngredientDao.class);
 				ingredientDao.dropTable();
 				ingredientDao.createTable();
+				
 				for ( Ingredient ingredient: ingredients) {
 					ingredientDao.insert(ingredient.getName());              
+				}
+			} catch ( Exception ex ) {
+				throw new IllegalStateException(ex);
+			}
+			
+			try {
+				FileReader readerPizza = new FileReader( getClass().getClassLoader().getResource("pizzas.json").getFile() );
+				List<Pizza> pizzas = JsonbBuilder.create().fromJson(readerPizza, new ArrayList<Pizza>(){}.getClass().getGenericSuperclass());
+
+				PizzaDao PizzaDao = BDDFactory.buildDao(PizzaDao.class);
+				PizzaDao.dropTable();
+				PizzaDao.createTable();
+				for ( Pizza pizza: pizzas) {
+					PizzaDao.insert(pizza.getName());              
 				}
 			} catch ( Exception ex ) {
 				throw new IllegalStateException(ex);
