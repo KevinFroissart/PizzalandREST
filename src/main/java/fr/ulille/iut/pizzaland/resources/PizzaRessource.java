@@ -30,7 +30,6 @@ public class PizzaRessource {
 
 	private PizzaDao pizzas;
 
-
 	@Context
 	public UriInfo uriInfo;
 
@@ -39,7 +38,6 @@ public class PizzaRessource {
 		pizzas.createTable();
 	}
 
-
 	@GET
 	public List<PizzaDto> getAll() {
 		LOGGER.info("PizzaRessource:getAll");
@@ -47,7 +45,6 @@ public class PizzaRessource {
 		List<PizzaDto> l = pizzas.getAll().stream().map(Pizza::toDto).collect(Collectors.toList());
 		return l;
 	}
-
 
 	@GET
 	@Path("{id}")
@@ -77,6 +74,11 @@ public class PizzaRessource {
 			LOGGER.info("tentative creation " + pizza.getName());
 			long id = pizzas.insert(pizza.getName());
 			pizza.setId(id);
+			if(pizza.getListeIngredient() != null) {
+				for(int i=0; i<pizza.getListeIngredient().length; i++) {
+					pizzas.insertIngredient(id, pizza.getListeIngredient()[i].getId());
+				}
+			}
 			PizzaDto pizzaDto = Pizza.toDto(pizza);
 
 			URI uri = uriInfo.getAbsolutePathBuilder().path("" + id).build();
@@ -112,7 +114,6 @@ public class PizzaRessource {
 		return Pizza.getName();
 	}
 
-
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response createPizza(@FormParam("name") String name) {
@@ -127,6 +128,11 @@ public class PizzaRessource {
 
 			long id = pizzas.insert(pizza.getName());
 			pizza.setId(id);
+			if(pizza.getListeIngredient() != null) {
+				for(int i=0; i<pizza.getListeIngredient().length; i++) {
+					pizzas.insertIngredient(id, pizza.getListeIngredient()[i].getId());
+				}
+			}
 			PizzaDto PizzaDto = Pizza.toDto(pizza);
 
 			URI uri = uriInfo.getAbsolutePathBuilder().path("" + id).build();

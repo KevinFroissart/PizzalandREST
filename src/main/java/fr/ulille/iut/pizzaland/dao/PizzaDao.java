@@ -15,7 +15,7 @@ public interface PizzaDao {
 	@SqlUpdate("CREATE TABLE IF NOT EXISTS pizzas (id INTEGER PRIMARY KEY, name VARCHAR UNIQUE NOT NULL)")
 	void createTable();
 
-	@SqlUpdate("CREATE TABLE IF NOT EXISTS pizzaIngredientAssociation (pizza INTEGER, ingredient INTEGER, PRIMARY KEY(pizza, ingredient), FOREIGN KEY(pizza) REFERENCES pizzas(id), FOREIGN KEY(ingredient) REFERENCES ingredients(id))")
+	@SqlUpdate("CREATE TABLE IF NOT EXISTS pizzaIngredientAssociation (pizza INTEGER NOT NULL, ingredient INTEGER NOT NULL, PRIMARY KEY(pizza, ingredient), FOREIGN KEY(pizza) REFERENCES pizzas(id), FOREIGN KEY(ingredient) REFERENCES ingredients(id))")
 	void createAssociationTable();
 
 	@Transaction
@@ -23,8 +23,6 @@ public interface PizzaDao {
 		createAssociationTable();
 		createTable();
 	}
-	
-	//insert sur association à faire
 
 	@SqlUpdate("DROP TABLE IF EXISTS pizzas; DROP TABLE IF EXISTS pizzaIngredientAssociation")
 	void dropTable();
@@ -47,4 +45,12 @@ public interface PizzaDao {
 
 	@SqlUpdate("DELETE FROM pizzas WHERE id = :id")
 	void remove(long id);
+
+	@SqlUpdate("INSERT INTO pizzaIngredientAssociation (idPizza, idIngredient) VALUES (:pizza, :ingredient)")
+	@GetGeneratedKeys
+	long insertIngredient(long idPizza, long idIngredient);
+
+	@SqlQuery("SELECT * FROM pizzaIngredientAssociation WHERE pizza = :pizza AND ingredient = :ingredient")
+	@RegisterBeanMapper(Pizza.class)
+	Pizza findAssociationByIds(long idPizza, long idIngredient);
 }
