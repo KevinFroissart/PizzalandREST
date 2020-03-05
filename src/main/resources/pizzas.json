@@ -5,5 +5,5 @@
 { "name": "diavola", "ingredients": [{ "name": "tomate" }, { "name": "mozzarella" }]},
 { "name": "sicilienne", "ingredients": [{ "name": "champignons" }, { "name": "olives" }]},
 { "name": "calzone", "ingredients": [{ "name": "jambon" }, { "name": "oeuf" }]},
-{ "name": "passaladière", "ingredients": [{ "name": "poivrons" }, { "name": "olives" }]},
+{ "name": "passaladière", "ingredients": [{ "name": "poivrons" }, { "name": "olives" }]}
 ]
