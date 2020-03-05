@@ -22,7 +22,7 @@ représentation JSON prendra donc la forme suivante :
 	  "name": "margarita",
 	  "ingredients":
 	  		[{ "name": "jambon" }, { 
-	  		 	"name": "mozzarella" }
+	  		   "name": "mozzarella" }
 	  		]}
 	}
 	
