@@ -19,6 +19,11 @@ public class Pizza {
 		this.listeIngredient = listeIngredient;
 	}
 
+	public Pizza(long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+	
 	public void setId(long id) {
 		this.id = id;
 	}
