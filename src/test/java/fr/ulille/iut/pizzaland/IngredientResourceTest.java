@@ -29,6 +29,7 @@ import fr.ulille.iut.pizzaland.dto.IngredientDto;
  * la méthode configure() permet de démarrer la ressource à tester
  */
 public class IngredientResourceTest extends JerseyTest {
+	@SuppressWarnings("unused")
 	private static final Logger LOGGER = Logger.getLogger(IngredientResourceTest.class.getName());
 
 

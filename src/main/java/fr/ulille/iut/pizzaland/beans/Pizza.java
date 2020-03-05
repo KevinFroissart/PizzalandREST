@@ -1,7 +1,5 @@
 package fr.ulille.iut.pizzaland.beans;
 
-import java.util.List;
-
 import fr.ulille.iut.pizzaland.dto.PizzaCreateDto;
 import fr.ulille.iut.pizzaland.dto.PizzaDto;
 

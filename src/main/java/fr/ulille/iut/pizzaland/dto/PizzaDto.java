@@ -1,7 +1,5 @@
 package fr.ulille.iut.pizzaland.dto;
 
-import java.util.List;
-
 import fr.ulille.iut.pizzaland.beans.Ingredient;
 
 public class PizzaDto {

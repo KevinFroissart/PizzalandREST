@@ -21,6 +21,7 @@ import fr.ulille.iut.pizzaland.dao.PizzaDao;
 public class ApiV1 extends ResourceConfig {
 	private static final Logger LOGGER = Logger.getLogger(ApiV1.class.getName());
 
+	@SuppressWarnings("serial")
 	public ApiV1() {
 		packages("fr.ulille.iut.pizzaland");
 
@@ -28,6 +29,7 @@ public class ApiV1 extends ResourceConfig {
 
 		if ( environment != null && environment.equals("withdb") ) {
 			LOGGER.info("Loading with database");
+			@SuppressWarnings("unused")
 			Jsonb jsonb = JsonbBuilder.create();
 			try {
 				FileReader reader = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );

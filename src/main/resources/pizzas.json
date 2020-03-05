@@ -1,18 +1,5 @@
 [
-    { 
-    	"name": "Margarita",
-    	"ingredients": [{
-    		"name": "mozzarella"
-    	}, {
-    		"name": "champignons"
-    	}]
-    },
-    { 
-    	"name": "Cannibale",
-    	"ingredients": [{
-    		"name": "merguez"
-    	}, {
-    		"name": "fromage"
-    	}]
-    }
+{ "name": "margarita", "ingredients": [{ "name": "jambon" }, { "name": "mozzarella" }]},
+{ "name": "cannibale", "ingredients": [{ "name": "merguez" }, { "name": "fromage" }]},
+{ "name": "reine", "ingredients": [{ "name": "oeuf" }, { "name": "lardons" }]},
 ]
