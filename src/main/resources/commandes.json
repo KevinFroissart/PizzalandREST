@@ -1,7 +1,7 @@
 [
-	{ "firstName": "Kévin", "name": "Froissart", "pizzas": [{ "name": "margarita" }, { "name": "cannibale" }, { "name": "reine" }]} },
-	{ "firstName": "Julien", "name": "Delevallez", "pizzas": [{ "name": "diavola" }, { "name": "cannibale" }, { "name": "sicilienne" }]} },
-	{ "firstName": "Maxence", "name": "Bourdin", "pizzas": [{ "name": "calzone" }, { "name": "passaladière" }, { "name": "reine" }]} },
-	{ "firstName": "Loic", "name": "Bourdin", "pizzas": [{ "name": "margarita" }, { "name": "diavola" }, { "name": "calzone" }]} },
-	{ "firstName": "Matthias", "name": "Merlin", "pizzas": [{ "name": "sicilienne" }, { "name": "cannibale" }, { "name": "calzone" }]} }
+	{ "firstName": "Kévin", "name": "Froissart", "pizzas": [{ "name": "margarita" }, { "name": "cannibale" }, { "name": "reine" }] },
+	{ "firstName": "Julien", "name": "Delevallez", "pizzas": [{ "name": "diavola" }, { "name": "cannibale" }, { "name": "sicilienne" }] },
+	{ "firstName": "Maxence", "name": "Bourdin", "pizzas": [{ "name": "calzone" }, { "name": "passaladière" }, { "name": "reine" }] },
+	{ "firstName": "Loic", "name": "Bombard", "pizzas": [{ "name": "margarita" }, { "name": "diavola" }, { "name": "calzone" }] },
+	{ "firstName": "Matthias", "name": "Merlin", "pizzas": [{ "name": "sicilienne" }, { "name": "cannibale" }, { "name": "calzone" }] }
 ]
