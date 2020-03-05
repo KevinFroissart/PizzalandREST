@@ -31,9 +31,9 @@ import fr.ulille.iut.pizzaland.dto.PizzaDto;
  * méthodes de l'interface javax.ws.rs.client.Client.
  * la méthode configure() permet de démarrer la ressource à tester
  */
-public class PizzaRessourceTest extends JerseyTest {
+public class PizzaResourceTest extends JerseyTest {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = Logger.getLogger(PizzaRessourceTest.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(PizzaResourceTest.class.getName());
 
 	private PizzaDao dao;
 	private IngredientDao ingredientDao;
@@ -128,7 +128,6 @@ public class PizzaRessourceTest extends JerseyTest {
 	public void testCreatePizzaWithIngredients() {
 		PizzaCreateDto pizzaCreateDto = new PizzaCreateDto();
 		pizzaCreateDto.setName("orientale");
-		//dao.insert(pizzaCreateDto.getName());
 		List<Ingredient> ingredients = new ArrayList<Ingredient>();
 		Ingredient ingredient1 = ingredientDao.findByName("mozzarella");
 		if(ingredient1 == null) {

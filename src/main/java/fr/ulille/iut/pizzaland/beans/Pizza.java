@@ -88,9 +88,9 @@ public class Pizza {
 		return "Pizza [id=" + id + ", name=" + name + ", ingrédients=" + listeIngredient.toString() + "]";
 	}
 
-	public static PizzaCreateDto toCreateDto(Pizza Pizza) {
+	public static PizzaCreateDto toCreateDto(Pizza pizza) {
 		PizzaCreateDto dto = new PizzaCreateDto();
-		dto.setName(Pizza.getName());
+		dto.setName(pizza.getName());
 
 		return dto;
 	}

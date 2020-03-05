@@ -25,15 +25,15 @@ import fr.ulille.iut.pizzaland.dto.PizzaDto;
 
 
 @Path("/pizzas")
-public class PizzaRessource {
-	private static final Logger LOGGER = Logger.getLogger(PizzaRessource.class.getName());
+public class PizzaResource {
+	private static final Logger LOGGER = Logger.getLogger(PizzaResource.class.getName());
 
 	private PizzaDao pizzas;
 
 	@Context
 	public UriInfo uriInfo;
 
-	public PizzaRessource() {
+	public PizzaResource() {
 		pizzas = BDDFactory.buildDao(PizzaDao.class);
 		pizzas.createTable();
 	}
@@ -61,8 +61,8 @@ public class PizzaRessource {
 	}
 
 	@POST
-	public Response createPizza(PizzaCreateDto PizzaCreateDto) {
-		Pizza existing = pizzas.findByName(PizzaCreateDto.getName());
+	public Response createPizza(PizzaCreateDto pizzaCreateDto) {
+		Pizza existing = pizzas.findByName(pizzaCreateDto.getName());
 		LOGGER.info("tentative creation");
 
 		if ( existing != null ) {
@@ -70,7 +70,7 @@ public class PizzaRessource {
 		}
 
 		try {
-			Pizza pizza = Pizza.fromPizzaCreateDto(PizzaCreateDto);
+			Pizza pizza = Pizza.fromPizzaCreateDto(pizzaCreateDto);
 			LOGGER.info("tentative creation " + pizza.getName());
 			long id = pizzas.insert(pizza.getName());
 			pizza.setId(id);
@@ -106,12 +106,12 @@ public class PizzaRessource {
 	@GET
 	@Path("{id}/name")
 	public String getPizzaName(@PathParam("id") long id) {
-		Pizza Pizza = pizzas.findById(id);
-		if ( Pizza == null ) {
+		Pizza pizza = pizzas.findById(id);
+		if ( pizza == null ) {
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 		}
 
-		return Pizza.getName();
+		return pizza.getName();
 	}
 
 	@POST
@@ -133,11 +133,11 @@ public class PizzaRessource {
 					pizzas.insertIngredient(id, pizza.getListeIngredient()[i].getId());
 				}
 			}
-			PizzaDto PizzaDto = Pizza.toDto(pizza);
+			PizzaDto pizzaDto = Pizza.toDto(pizza);
 
 			URI uri = uriInfo.getAbsolutePathBuilder().path("" + id).build();
 
-			return Response.created(uri).entity(PizzaDto).build();
+			return Response.created(uri).entity(pizzaDto).build();
 		}
 		catch ( Exception e ) {
 			e.printStackTrace();

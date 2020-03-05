@@ -11,8 +11,10 @@ import javax.ws.rs.ApplicationPath;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
+import fr.ulille.iut.pizzaland.beans.Commande;
 import fr.ulille.iut.pizzaland.beans.Ingredient;
 import fr.ulille.iut.pizzaland.beans.Pizza;
+import fr.ulille.iut.pizzaland.dao.CommandeDao;
 import fr.ulille.iut.pizzaland.dao.IngredientDao;
 import fr.ulille.iut.pizzaland.dao.PizzaDao;
 
@@ -32,8 +34,8 @@ public class ApiV1 extends ResourceConfig {
 			@SuppressWarnings("unused")
 			Jsonb jsonb = JsonbBuilder.create();
 			try {
-				FileReader reader = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );
-				List<Ingredient> ingredients = JsonbBuilder.create().fromJson(reader, new ArrayList<Ingredient>(){}.getClass().getGenericSuperclass());
+				FileReader readerIngredient = new FileReader( getClass().getClassLoader().getResource("ingredients.json").getFile() );
+				List<Ingredient> ingredients = JsonbBuilder.create().fromJson(readerIngredient, new ArrayList<Ingredient>(){}.getClass().getGenericSuperclass());
 
 				IngredientDao ingredientDao = BDDFactory.buildDao(IngredientDao.class);
 				ingredientDao.dropTable();
@@ -55,6 +57,20 @@ public class ApiV1 extends ResourceConfig {
 				PizzaDao.createTable();
 				for ( Pizza pizza: pizzas) {
 					PizzaDao.insert(pizza.getName());              
+				}
+			} catch ( Exception ex ) {
+				throw new IllegalStateException(ex);
+			}
+			
+			try {
+				FileReader readerCommande = new FileReader( getClass().getClassLoader().getResource("commandes.json").getFile() );
+				List<Commande> commandes = JsonbBuilder.create().fromJson(readerCommande, new ArrayList<Commande>(){}.getClass().getGenericSuperclass());
+
+				CommandeDao CommandeDao = BDDFactory.buildDao(CommandeDao.class);
+				CommandeDao.dropTable();
+				CommandeDao.createTable();
+				for ( Commande commande: commandes) {
+					CommandeDao.insert(commande.getName());              
 				}
 			} catch ( Exception ex ) {
 				throw new IllegalStateException(ex);
