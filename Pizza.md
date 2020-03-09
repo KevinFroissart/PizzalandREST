@@ -7,6 +7,7 @@
 |           |             |                                               | 404 si id est inconnu                         |
 | GET       | /pizzas/{id}/name | récupère le nom de la pizza    | 200 et le nom de la pizza                 |
 |           |             | d'identifiant id                              | 404 si id est inconnu                         |
+| GET       | /pizzas/search?ingredient=name | récupère les pizzas qui possèdent cet ingrédient    | 200 et une liste de pizza                 |
 | POST      | /pizzas | création d'une pizza                     | 201 et l'URI de la ressource créée + représentation |
 |           |             |                                               | 400 si les informations ne sont pas correctes |
 |           |             |                                               | 409 si la pizza existe déjà (même nom)    |
