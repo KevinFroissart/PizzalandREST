@@ -70,9 +70,9 @@ public class IngredientResourceTest extends JerseyTest {
 		assertEquals(ingredient, result);
 	}
 
-
 	@Test
 	public void testGetEmptyList() {
+		dao.dropTable();
 		// La méthode target() permet de préparer une requête sur une URI.
 		// La classe Response permet de traiter la réponse HTTP reçue.
 		Response response = target("/ingredients").request().get();
