@@ -1,6 +1,7 @@
 package fr.ulille.iut.pizzaland.resources;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -12,12 +13,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import fr.ulille.iut.pizzaland.BDDFactory;
+import fr.ulille.iut.pizzaland.beans.Ingredient;
 import fr.ulille.iut.pizzaland.beans.Pizza;
 import fr.ulille.iut.pizzaland.dao.PizzaDao;
 import fr.ulille.iut.pizzaland.dto.PizzaCreateDto;
@@ -112,6 +115,28 @@ public class PizzaResource {
 		}
 
 		return pizza.getName();
+	}
+
+	@GET
+	@Path("search")
+	public List<PizzaDto> getPizzaWithSpecificIngredient(@QueryParam("ingredient") String ingredient) {
+		LOGGER.info("PizzaRessource:getAll");
+
+		List<PizzaDto> l = pizzas.getAll().stream().map(Pizza::toDto).collect(Collectors.toList());
+
+		List<PizzaDto> res = new ArrayList<PizzaDto>();
+
+		for(PizzaDto lesPizzas : l) {
+			Ingredient[] listeIngredients = lesPizzas.getListeIngredient();
+			if(listeIngredients != null) {
+				for(int i = 0; i < listeIngredients.length; i++) {
+					if(listeIngredients != null && listeIngredients[i].equals(ingredient)) {
+						res.add(lesPizzas);
+					}
+				}
+			}
+		}
+		return res;
 	}
 
 	@POST
